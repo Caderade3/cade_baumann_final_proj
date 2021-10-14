@@ -1,0 +1,78 @@
+---
+title: "ISTA 320 Final Project"
+author: "Cade Baumann"
+date: "Fall 2021"
+output: html_document
+---
+# Data
+
+The data I am using for this project I found on Kaggle called "Violent Crime Rates by US States", (https://www.kaggle.com/mathchi/violent-crime-rates-by-us-state).This data set is based during 1977.
+
+My data questions are:
+
+* Which state(s) has the highest rate of murder arrests?
+* Which state(s) has the highest rate of assault arrests?
+* Which state(s) has the highest rate of rape arrests?
+* Which state(s) has the lowest rate of murder arrests?
+* Which state(s) has the lowest rate of assault arrests?
+* Which state(s) has the lowest rate of rape arrests?
+
+
+# Loading Libraries: 
+```{r setup, include=FALSE}
+library(knitr)
+library(tidyverse)
+library(usmap)
+opts_chunk$set(echo = TRUE)
+```
+# Loading the data in:
+```{r}
+crimes <- read_csv("data/US_violent_crime.csv")
+```
+
+# Code and Plots
+```{r}
+crimes_murder <- crimes %>% 
+  select(X1, Murder)
+
+crimes_murder %>% 
+  ggplot(aes(x = X1, y = Murder)) +
+  geom_bar(stat = "identity", fill = "#E69F00", color = "#0072B2") +
+  labs(x = "State", y = "Murder Arrests (per 100,000)",
+       title = "US Murder Arrest Rate per State in 1977") +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+```
+
+* As we can see from the plot above, the state with the highest amount of murder arrests is Georgia, with ~17.4 (per 100,000) arrests. The lowest state is North Dakota with 0.8 (per 100,000) arrests. 
+```{r}
+crimes_assault <- crimes %>% 
+  select(X1, Assault)
+
+crimes_assault %>% 
+  ggplot(aes(x = X1, Assault)) +
+  geom_line(aes(group = 1), color = "#0072B2") +
+  labs(x = "State", y = "Assault Arrests (per 100,000)",
+       title = "US Assault Charge Rates per State in 1977") +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+```
+
+* We can see from the line plot, that the state with the highest number of assault arrests is Florida and North Carolina, both are close to being the highest, with a difference of 2. Florida with 335 arrests and North Carolina with 337 arrests (per 100,000). The state with the lowest amount of assault arrests are North Dakota, Hawaii and Vermont, all with similar rates, varied only by a few arrests. North Dakota with 45 arrests, Hawaii with 46 arrests and Vermont with 48 arrests (per 100,000).
+
+```{r}
+crimes_rape <- crimes %>% 
+  select(X1, Rape) 
+
+names(crimes_rape)[1] <- 'state'
+
+
+crimes_rape %>% 
+  plot_usmap(data = .,
+             values = "Rape") +
+  theme(legend.position = "right") +
+  scale_fill_continuous(name = "Number of Rape Arrests (per 100,000)",
+                        low = "#F0E442",
+                        high = "#D55E00") +
+  ggtitle("US Rape Charges per State in 1977")
+```
+
+* We can see from the US map above, that the highest states of rape arrests are Nevada and Alaska as a close second. Nevada with 46.0 arrests Alaska with 44.5 arrests (per 100,000). The lowest states are North Dakota and Maine, North Dakota with 7.3 arrests and Maine with 7.88 arrests (per 100,000).
